@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Analysis Result</title>
+
+<link rel="stylesheet"
+href="{{ url_for('static',filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="result-card">
+
+<h1>🎤 Analysis Report</h1>
+
+<div class="result">
+
+<div class="box">
+
+<h3>Transcript</h3>
+
+<p>{{ result.transcript }}</p>
+
+</div>
+
+<div class="box">
+
+<h3>Speaking Duration</h3>
+
+<h2>{{ result.duration }} sec</h2>
+
+</div>
+
+<div class="box">
+
+<h3>Speaking Speed</h3>
+
+<h2>{{ result.wpm }} WPM</h2>
+
+</div>
+
+<div class="box">
+
+<h3>Pause Count</h3>
+
+<h2>{{ result.pauses }}</h2>
+
+</div>
+
+<div class="box">
+
+<h3>Confidence Score</h3>
+
+<h2>{{ result.confidence }}%</h2>
+
+<div class="progress">
+
+<div
+class="progress-bar"
+style="width:{{ result.confidence }}%">
+</div>
+
+</div>
+
+</div>
+
+<div class="box">
+
+<h3>Filler Words</h3>
+
+{% if result.fillers %}
+
+<ul>
+
+{% for word,count in result.fillers.items() %}
+
+<li>{{ word }} : {{ count }}</li>
+
+{% endfor %}
+
+</ul>
+
+{% else %}
+
+<p>No filler words detected.</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<div class="feedback">
+
+<h2>💡 Suggestions</h2>
+
+<ul>
+
+{% for item in result.feedback %}
+
+<li>{{ item }}</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+<br>
+
+<a href="/">
+
+<button id="startBtn">
+
+Analyze Another Speech
+
+</button>
+
+</a>
+
+</div>
+
+</body>
+
+</html>
