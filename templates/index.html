@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Public Speaking Coach</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎤 Public Speaking Coach</h1>
+
+    <p>Practice your speech and receive AI-powered feedback.</p>
+
+    <div class="card">
+
+        <h2>Record Your Speech</h2>
+
+        <div id="timer">00:00</div>
+
+        <button id="startBtn">
+            🎙 Start Recording
+        </button>
+
+        <button id="stopBtn" disabled>
+            ⏹ Stop Recording
+        </button>
+
+        <p id="status">
+            Click Start Recording
+        </p>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+
+</html>
