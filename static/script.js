@@ -1,32 +1,118 @@
-let mediaRecorder;
-let audioChunks = [];
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-let startBtn = document.getElementById("startBtn");
-let stopBtn = document.getElementById("stopBtn");
-let timer = document.getElementById("timer");
-let status = document.getElementById("status");
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+const analyzeBtn = document.getElementById("analyzeBtn");
 
+const transcriptBox = document.getElementById("transcript");
+
+const hiddenTranscript = document.getElementById("hiddenTranscript");
+const hiddenDuration = document.getElementById("hiddenDuration");
+
+const timer = document.getElementById("timer");
+const status = document.getElementById("status");
+
+let recognition;
+let finalTranscript = "";
 let seconds = 0;
 let interval;
 
-startBtn.addEventListener("click", async () => {
+if (!SpeechRecognition) {
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true
-    });
+    status.innerHTML = "❌ Speech Recognition is not supported in this browser.";
 
-    mediaRecorder = new MediaRecorder(stream);
+    startBtn.disabled = true;
 
-    audioChunks = [];
+} else {
 
-    mediaRecorder.start();
+    recognition = new SpeechRecognition();
 
-    status.innerHTML = "🎤 Recording...";
+    recognition.lang = "en-US";
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onstart = () => {
+
+        status.innerHTML = "🎤 Listening...";
+
+    };
+
+    recognition.onresult = (event) => {
+
+        let interimTranscript = "";
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+
+            const text = event.results[i][0].transcript;
+
+            if (event.results[i].isFinal) {
+
+                finalTranscript += text + " ";
+
+            } else {
+
+                interimTranscript += text;
+
+            }
+
+        }
+
+        transcriptBox.value = finalTranscript + interimTranscript;
+
+    };
+
+    recognition.onerror = (event) => {
+
+        console.log(event.error);
+
+        status.innerHTML = "❌ " + event.error;
+
+        clearInterval(interval);
+
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+
+    };
+
+    recognition.onend = () => {
+
+        clearInterval(interval);
+
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+
+        status.innerHTML = "✅ Speech captured.";
+
+        if (finalTranscript.trim() !== "") {
+
+            hiddenTranscript.value = finalTranscript.trim();
+
+            hiddenDuration.value = seconds;
+
+            document.getElementById("speechForm").submit();
+
+        }
+
+    };
+
+}
+
+startBtn.onclick = () => {
+
+    if (!recognition) return;
+
+    finalTranscript = "";
+
+    transcriptBox.value = "";
+
+    seconds = 0;
+
+    timer.innerHTML = "00:00";
+
+    recognition.start();
 
     startBtn.disabled = true;
     stopBtn.disabled = false;
-
-    seconds = 0;
 
     interval = setInterval(() => {
 
@@ -39,86 +125,32 @@ startBtn.addEventListener("click", async () => {
 
     }, 1000);
 
-    mediaRecorder.ondataavailable = (event) => {
+};
 
-        if (event.data.size > 0) {
+stopBtn.onclick = () => {
 
-            audioChunks.push(event.data);
+    if (!recognition) return;
 
-        }
+    recognition.stop();
 
-    };
+};
 
-});
+analyzeBtn.onclick = () => {
 
+    const text = transcriptBox.value.trim();
 
-stopBtn.addEventListener("click", () => {
+    if (text === "") {
 
-    mediaRecorder.stop();
+        alert("Please speak or type your speech first.");
 
-    clearInterval(interval);
+        return;
 
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
+    }
 
-    status.innerHTML = "⏳ Uploading & Analyzing...";
+    hiddenTranscript.value = text;
 
-});
+    hiddenDuration.value = seconds;
 
+    document.getElementById("speechForm").submit();
 
-mediaRecorderFinished = () => {};
-
-document.addEventListener("DOMContentLoaded", () => {
-
-});
-
-
-function uploadAudio(blob) {
-
-    const formData = new FormData();
-
-    formData.append("audio", blob, "speech.webm");
-
-    fetch("/analyze", {
-
-        method: "POST",
-
-        body: formData
-
-    })
-    .then(response => response.text())
-    .then(html => {
-
-        document.open();
-        document.write(html);
-        document.close();
-
-    })
-    .catch(error => {
-
-        alert("Error uploading audio.");
-
-        console.log(error);
-
-    });
-
-}
-
-
-document.addEventListener("mouseup", () => {
-
-    if (!mediaRecorder) return;
-
-    mediaRecorder.onstop = () => {
-
-        const blob = new Blob(audioChunks, {
-
-            type: "audio/webm"
-
-        });
-
-        uploadAudio(blob);
-
-    };
-
-});
+};
