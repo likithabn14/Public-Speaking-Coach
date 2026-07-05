@@ -1,14 +1,7 @@
 from flask import Flask, render_template, request
-from werkzeug.utils import secure_filename
-from analyzer import analyze_audio
-import os
+from analyzer import analyze_text
 
 app = Flask(__name__)
-
-UPLOAD_FOLDER = "uploads"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 @app.route("/")
@@ -19,23 +12,19 @@ def home():
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
-    if "audio" not in request.files:
-        return "No audio file uploaded."
+    transcript = request.form.get("transcript", "").strip()
 
-    file = request.files["audio"]
+    try:
+        duration = float(request.form.get("duration", 0))
+    except ValueError:
+        duration = 0
 
-    if file.filename == "":
-        return "No selected file."
+    result = analyze_text(transcript, duration)
 
-    filename = secure_filename(file.filename)
-
-    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-
-    file.save(filepath)
-
-    result = analyze_audio(filepath)
-
-    return render_template("result.html", result=result)
+    return render_template(
+        "result.html",
+        result=result
+    )
 
 
 if __name__ == "__main__":
