@@ -2,9 +2,8 @@
 
 Overview
 
-Public Speaking Coach is an AI-powered web application that helps users improve their speaking skills. The application records speech through the microphone, converts it into text using Whisper AI, and analyzes speaking performance by measuring speaking speed, duration, pauses, filler words, and an overall confidence score. It also provides personalized feedback to help users become better public speakers.
+Public Speaking Coach is an AI-powered web application that helps users improve their speaking skills. The application records speech through the microphone, converts it into text using Whisper AI, and analyzes speaking performance by measuring speaking speed, duration, pauses, filler words, and an overall confidence score. It also provides personalized feedback to help users become better public speakers
 
-DEMO LINK: 
 Features
 🎤 Record speech using the microphone
 📝 AI Speech-to-Text using Whisper
