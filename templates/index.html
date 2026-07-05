@@ -9,7 +9,8 @@
 
     <title>Public Speaking Coach</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 
 </head>
 
@@ -19,25 +20,79 @@
 
     <h1>🎤 Public Speaking Coach</h1>
 
-    <p>Practice your speech and receive AI-powered feedback.</p>
+    <p>
+        Practice your public speaking using your voice or by typing your speech.
+    </p>
 
     <div class="card">
 
-        <h2>Record Your Speech</h2>
+        <div id="status">
 
-        <div id="timer">00:00</div>
+            Click <b>Start Speaking</b> or type your speech below.
 
-        <button id="startBtn">
-            🎙 Start Recording
-        </button>
+        </div>
 
-        <button id="stopBtn" disabled>
-            ⏹ Stop Recording
-        </button>
+        <br>
 
-        <p id="status">
-            Click Start Recording
-        </p>
+        <div id="timer">
+
+            00:00
+
+        </div>
+
+        <br>
+
+        <textarea
+            id="transcript"
+            placeholder="Speak or type your speech here..."></textarea>
+
+        <br><br>
+
+        <div class="button-group">
+
+            <button
+                type="button"
+                id="startBtn">
+
+                🎙 Start Speaking
+
+            </button>
+
+            <button
+                type="button"
+                id="stopBtn"
+                disabled>
+
+                ⏹ Stop
+
+            </button>
+
+            <button
+                type="button"
+                id="analyzeBtn">
+
+                📊 Analyze Speech
+
+            </button>
+
+        </div>
+
+        <form
+            id="speechForm"
+            action="/analyze"
+            method="POST">
+
+            <input
+                type="hidden"
+                id="hiddenTranscript"
+                name="transcript">
+
+            <input
+                type="hidden"
+                id="hiddenDuration"
+                name="duration">
+
+        </form>
 
     </div>
 
