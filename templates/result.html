@@ -1,127 +1,219 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Analysis Report</title>
 
-<meta charset="UTF-8">
-
-<title>Analysis Result</title>
-
-<link rel="stylesheet"
-href="{{ url_for('static',filename='style.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
 <div class="result-card">
 
-<h1>🎤 Analysis Report</h1>
+    <h1>📊 Public Speaking Analysis Report</h1>
 
-<div class="result">
+    <br>
 
-<div class="box">
+    <div class="box">
 
-<h3>Transcript</h3>
+        <h2>🏆 Overall Score</h2>
 
-<p>{{ result.transcript }}</p>
+        <h1>{{ result.overall_score }}/100</h1>
 
-</div>
+        <h2>{{ result.rating }}</h2>
 
-<div class="box">
+        <h3>{{ result.level }}</h3>
 
-<h3>Speaking Duration</h3>
+    </div>
 
-<h2>{{ result.duration }} sec</h2>
+    <br>
 
-</div>
+    <div class="box">
 
-<div class="box">
+        <h3>📝 Transcript</h3>
 
-<h3>Speaking Speed</h3>
+        <p>{{ result.transcript }}</p>
 
-<h2>{{ result.wpm }} WPM</h2>
+    </div>
 
-</div>
+    <br>
 
-<div class="box">
+    <div class="result">
 
-<h3>Pause Count</h3>
+        <div class="box">
+            <h3>🎤 Speech Length</h3>
+            <h2>{{ result.length_score }}/15</h2>
+        </div>
 
-<h2>{{ result.pauses }}</h2>
+        <div class="box">
+            <h3>🚀 Speaking Speed</h3>
+            <h2>{{ result.speed_score }}/20</h2>
+        </div>
 
-</div>
+        <div class="box">
+            <h3>💬 Filler Words</h3>
+            <h2>{{ result.filler_score }}/15</h2>
+        </div>
 
-<div class="box">
+        <div class="box">
+            <h3>📚 Vocabulary</h3>
+            <h2>{{ result.vocab_score }}/15</h2>
+        </div>
 
-<h3>Confidence Score</h3>
+        <div class="box">
+            <h3>🔁 Repeated Words</h3>
+            <h2>{{ result.repeat_score }}/10</h2>
+        </div>
 
-<h2>{{ result.confidence }}%</h2>
+        <div class="box">
+            <h3>💼 Professional Language</h3>
+            <h2>{{ result.professional_score }}/10</h2>
+        </div>
 
-<div class="progress">
+        <div class="box">
+            <h3>✍ Sentence Quality</h3>
+            <h2>{{ result.sentence_score }}/10</h2>
+        </div>
 
-<div
-class="progress-bar"
-style="width:{{ result.confidence }}%">
-</div>
+        <div class="box">
+            <h3>⭐ Confidence</h3>
+            <h2>{{ result.confidence_score }}/5</h2>
+        </div>
 
-</div>
+    </div>
 
-</div>
+    <br>
 
-<div class="box">
+    <div class="result">
 
-<h3>Filler Words</h3>
+        <div class="box">
+            <h3>⏱ Speaking Duration</h3>
+            <h2>{{ result.duration }} sec</h2>
+        </div>
 
-{% if result.fillers %}
+        <div class="box">
+            <h3>⚡ Words Per Minute</h3>
+            <h2>{{ result.wpm }} WPM</h2>
+        </div>
 
-<ul>
+    </div>
 
-{% for word,count in result.fillers.items() %}
+    <br>
 
-<li>{{ word }} : {{ count }}</li>
+    <div class="box">
 
-{% endfor %}
+        <h3>💬 Detected Filler Words</h3>
 
-</ul>
+        {% if result.fillers %}
 
-{% else %}
+        <table>
 
-<p>No filler words detected.</p>
+            <tr>
+                <th>Word</th>
+                <th>Count</th>
+            </tr>
 
-{% endif %}
+            {% for word, count in result.fillers.items() %}
 
-</div>
+            <tr>
+                <td>{{ word }}</td>
+                <td>{{ count }}</td>
+            </tr>
 
-</div>
+            {% endfor %}
 
-<div class="feedback">
+        </table>
 
-<h2>💡 Suggestions</h2>
+        {% else %}
 
-<ul>
+        <p>No filler words detected 🎉</p>
 
-{% for item in result.feedback %}
+        {% endif %}
 
-<li>{{ item }}</li>
+    </div>
 
-{% endfor %}
+    <br>
 
-</ul>
+    <div class="box">
 
-</div>
+        <h2>✅ Strengths</h2>
 
-<br>
+        <ul>
 
-<a href="/">
+            {% for item in result.strengths %}
 
-<button id="startBtn">
+            <li>{{ item }}</li>
 
-Analyze Another Speech
+            {% endfor %}
 
-</button>
+        </ul>
 
-</a>
+    </div>
+
+    <br>
+
+    <div class="box">
+
+        <h2>⚠️ Areas to Improve</h2>
+
+        <ul>
+
+            {% for item in result.improvements %}
+
+            <li>{{ item }}</li>
+
+            {% endfor %}
+
+        </ul>
+
+    </div>
+
+    <br>
+
+    {% if result.overall_score >= 90 %}
+
+    <h2 style="text-align:center;color:limegreen;">
+        🌟 Excellent Performance!
+    </h2>
+
+    {% elif result.overall_score >= 75 %}
+
+    <h2 style="text-align:center;color:deepskyblue;">
+        👍 Good Performance!
+    </h2>
+
+    {% elif result.overall_score >= 60 %}
+
+    <h2 style="text-align:center;color:orange;">
+        📈 Keep Practicing!
+    </h2>
+
+    {% else %}
+
+    <h2 style="text-align:center;color:red;">
+        🎯 Practice More and Try Again!
+    </h2>
+
+    {% endif %}
+
+    <br><br>
+
+    <div style="text-align:center;">
+
+        <a href="/">
+
+            <button id="startBtn">
+
+                🔄 Analyze Another Speech
+
+            </button>
+
+        </a>
+
+    </div>
 
 </div>
 
